@@ -1,42 +1,27 @@
-/**
- * @typedef {!{id: number, completed: boolean, title: string}}
- */
-export var Item;
-
-/**
- * @typedef {!Array<Item>}
- */
-export var ItemList;
-
-/**
- * Enum containing a known-empty record type, matching only empty records unlike Object.
- *
- * @enum {Object}
- */
-const Empty = {
-	Record: {}
+export type Item = {
+	id: number,
+	completed: boolean,
+	title: string
 };
+
+export type ItemList = Item[];
+
 
 /**
  * Empty ItemQuery type, based on the Empty @enum.
- *
- * @typedef {Empty}
  */
-export var EmptyItemQuery;
+export type EmptyItemQuery = {};
 
 /**
  * Reference to the only EmptyItemQuery instance.
- *
- * @type {EmptyItemQuery}
  */
-export const emptyItemQuery = Empty.Record;
+export const emptyItemQuery: EmptyItemQuery = {};
 
-/**
- * @typedef {!({id: number}|{completed: boolean}|EmptyItemQuery)}
- */
-export var ItemQuery;
+export type ItemQuery =
+	{id: number} |
+	{completed: boolean} |
+	EmptyItemQuery;
 
-/**
- * @typedef {!({id: number, title: string}|{id: number, completed: boolean})}
- */
-export var ItemUpdate;
+export type ItemUpdate =
+	{id: number, title: string}|
+	{id: number, completed: boolean};
