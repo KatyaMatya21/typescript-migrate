@@ -16,7 +16,7 @@ export default class Template {
 	 *	completed: false,
 	 * })
 	 */
-	itemList(items) {
+	itemList(items: ItemList): string {
 		return items.reduce((a, item) => a + `
 <li data-id="${item.id}"${item.completed ? ' class="completed"' : ''}>
 	<div class="view">
@@ -34,7 +34,7 @@ export default class Template {
 	 *
 	 * @returns {!string} Contents for an "items left" indicator
 	 */
-	itemCounter(activeTodos) {
+	itemCounter(activeTodos: number): string {
 		return `${activeTodos} item${activeTodos !== 1 ? 's' : ''} left`;
 	}
 }
