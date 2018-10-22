@@ -1,43 +1,39 @@
 import {Item, ItemList, ItemQuery, ItemUpdate, emptyItemQuery} from './item';
 
 export default class Store {
+	localStorage: Storage;
+
+	liveTodos: ItemList;
+
 	/**
 	 * @param {!string} name Database name
 	 * @param {function()} [callback] Called when the Store is ready
 	 */
-	constructor(name, callback) {
-		/**
-		 * @type {Storage}
-		 */
-		const localStorage = window.localStorage;
-
-		/**
-		 * @type {ItemList}
-		 */
-		let liveTodos;
-
-		/**
-		 * Read the local ItemList from localStorage.
-		 *
-		 * @returns {ItemList} Current array of todos
-		 */
-		this.getLocalStorage = () => {
-			return liveTodos || JSON.parse(localStorage.getItem(name) || '[]');
-		};
-
-		/**
-		 * Write the local ItemList to localStorage.
-		 *
-		 * @param {ItemList} todos Array of todos to write
-		 */
-		this.setLocalStorage = (todos) => {
-			localStorage.setItem(name, JSON.stringify(liveTodos = todos));
-		};
+	constructor(name: string, callback?: () => void) {
+		this.localStorage = window.localStorage;
 
 		if (callback) {
 			callback();
 		}
 	}
+
+	/**
+	 * Read the local ItemList from localStorage.
+	 *
+	 * @returns {ItemList} Current array of todos
+	 */
+	getLocalStorage(): ItemList {
+		return this.liveTodos || JSON.parse(localStorage.getItem(name) || '[]');
+	};
+
+	/**
+	 * Write the local ItemList to localStorage.
+	 *
+	 * @param {ItemList} todos Array of todos to write
+	 */
+	setLocalStorage(todos: ItemList) {
+		localStorage.setItem(name, JSON.stringify(this.liveTodos = todos));
+	};
 
 	/**
 	 * Find items with properties matching those on query.
@@ -50,7 +46,7 @@ export default class Store {
 	 *	 // data shall contain items whose completed properties are true
 	 * })
 	 */
-	find(query, callback) {
+	find(query: ItemQuery, callback: (arg0: ItemList) => void) {
 		const todos = this.getLocalStorage();
 		let k;
 
@@ -70,7 +66,7 @@ export default class Store {
 	 * @param {ItemUpdate} update Record with an id and a property to update
 	 * @param {function()} [callback] Called when partialRecord is applied
 	 */
-	update(update, callback) {
+	update(update: ItemUpdate, callback?: () => void) {
 		const id = update.id;
 		const todos = this.getLocalStorage();
 		let i = todos.length;
@@ -98,7 +94,7 @@ export default class Store {
 	 * @param {Item} item Item to insert
 	 * @param {function()} [callback] Called when item is inserted
 	 */
-	insert(item, callback) {
+	insert(item: Item, callback?: () => void) {
 		const todos = this.getLocalStorage();
 		todos.push(item);
 		this.setLocalStorage(todos);
@@ -114,7 +110,7 @@ export default class Store {
 	 * @param {ItemQuery} query Query matching the items to remove
 	 * @param {function(ItemList)|function()} [callback] Called when records matching query are removed
 	 */
-	remove(query, callback) {
+	remove(query: ItemQuery, callback?: (arg0?: ItemList) => void) {
 		let k;
 
 		const todos = this.getLocalStorage().filter(todo => {
@@ -138,7 +134,7 @@ export default class Store {
 	 *
 	 * @param {function(number, number, number)} callback Called when the count is completed
 	 */
-	count(callback) {
+	count(callback: (arg0: number, arg1: number, arg2: number) => void) {
 		this.find(emptyItemQuery, data => {
 			const total = data.length;
 
@@ -146,7 +142,9 @@ export default class Store {
 			let completed = 0;
 
 			while (i--) {
-				completed += data[i].completed;
+				if(data[i].completed) {
+					completed += 1;
+				}
 			}
 			callback(total, total - completed, completed);
 		});
