@@ -4,6 +4,11 @@
 		<meta charset="utf-8">
 		<title>Vanilla ES6 • TodoMVC</title>
 		<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+		<style>
+			body,.todoapp {
+				background-color: black;
+			}
+		</style>
 	</head>
 	<body>
 		<section class="todoapp">
@@ -38,8 +43,10 @@
 			<p>Refactored by <a href="https://github.com/xorgy">Aaron Muir Hamilton</a></p>
 			<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
 		</footer>
+		<script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
 		<script src="dist/bundle.js"></script>
 		<script src="node_modules/todomvc-common/base.js"></script>
+		<script>require(["app"]);</script>
 		<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
 	</body>
 </html>

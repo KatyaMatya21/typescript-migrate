@@ -9,6 +9,7 @@
     "todomvc-common": "^1.0.2"
   },
   "devDependencies": {
-    "google-closure-compiler": "^20160315.2.0"
+    "google-closure-compiler": "^20160315.2.0",
+    "typescript": "^3.1.3"
   }
 }
