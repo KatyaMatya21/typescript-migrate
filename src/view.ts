@@ -7,10 +7,17 @@ const ENTER_KEY = 13;
 const ESCAPE_KEY = 27;
 
 export default class View {
+	template: Template;
+	$todoList: HTMLElement;
+	$todoItemCounter: HTMLElement;
+	$clearCompleted: HTMLElement;
+	$main: HTMLElement;
+	$toggleAll: HTMLInputElement;
+	$newTodo: HTMLInputElement;
 	/**
 	 * @param {!Template} template A Template instance
 	 */
-	constructor(template) {
+	constructor(template: Template) {
 		this.template = template;
 		this.$todoList = qs('.todo-list');
 		this.$todoItemCounter = qs('.todo-count');
@@ -18,6 +25,7 @@ export default class View {
 		this.$main = qs('.main');
 		this.$toggleAll = qs('.toggle-all');
 		this.$newTodo = qs('.new-todo');
+
 		$delegate(this.$todoList, 'li label', 'dblclick', ({target}) => {
 			this.editItem(target);
 		});
@@ -29,7 +37,7 @@ export default class View {
 	 *
 	 * @param {!Element} target Target Item's label Element
 	 */
-	editItem(target) {
+	editItem(target: HTMLElement) {
 		const listItem = target.parentElement.parentElement;
 
 		listItem.classList.add('editing');
@@ -47,7 +55,7 @@ export default class View {
 	 *
 	 * @param {ItemList} items Array of items to display
 	 */
-	showItems(items) {
+	showItems(items: ItemList) {
 		this.$todoList.innerHTML = this.template.itemList(items);
 	}
 
@@ -56,7 +64,7 @@ export default class View {
 	 *
 	 * @param {number} id Item ID of the item to remove
 	 */
-	removeItem(id) {
+	removeItem(id: number) {
 		const elem = qs(`[data-id="${id}"]`);
 
 		if (elem) {
@@ -69,7 +77,7 @@ export default class View {
 	 *
 	 * @param {number} itemsLeft Number of items left
 	 */
-	setItemsLeft(itemsLeft) {
+	setItemsLeft(itemsLeft: number) {
 		this.$todoItemCounter.innerHTML = this.template.itemCounter(itemsLeft);
 	}
 
@@ -78,7 +86,7 @@ export default class View {
 	 *
 	 * @param {boolean|number} visible Desired visibility of the button
 	 */
-	setClearCompletedButtonVisibility(visible) {
+	setClearCompletedButtonVisibility(visible: boolean | number) {
 		this.$clearCompleted.style.display = !!visible ? 'block' : 'none';
 	}
 
@@ -87,7 +95,7 @@ export default class View {
 	 *
 	 * @param {boolean|number} visible Desired visibility
 	 */
-	setMainVisibility(visible) {
+	setMainVisibility(visible: boolean | number) {
 		this.$main.style.display = !!visible ? 'block' : 'none';
 	}
 
@@ -96,7 +104,7 @@ export default class View {
 	 *
 	 * @param {boolean|number} checked The desired checked state
 	 */
-	setCompleteAllCheckbox(checked) {
+	setCompleteAllCheckbox(checked: boolean | number) {
 		this.$toggleAll.checked = !!checked;
 	}
 
@@ -105,7 +113,7 @@ export default class View {
 	 *
 	 * @param {string} route The current route
 	 */
-	updateFilterButtons(route) {
+	updateFilterButtons(route: string) {
 		qs('.filters .selected').className = '';
 		qs(`.filters [href="#/${route}"]`).className = 'selected';
 	}
@@ -123,7 +131,7 @@ export default class View {
 	 * @param {!number} id Item ID
 	 * @param {!boolean} completed True if the item is completed
 	 */
-	setItemComplete(id, completed) {
+	setItemComplete(id: number, completed: boolean) {
 		const listItem = qs(`[data-id="${id}"]`);
 
 		if (!listItem) {
@@ -133,7 +141,7 @@ export default class View {
 		listItem.className = completed ? 'completed' : '';
 
 		// In case it was toggled from an event and not by clicking the checkbox
-		qs('input', listItem).checked = completed;
+		qs<HTMLInputElement>('input', listItem).checked = completed;
 	}
 
 	/**
@@ -142,7 +150,7 @@ export default class View {
 	 * @param {!number} id Item ID of the item in edit
 	 * @param {!string} title New title for the item in edit
 	 */
-	editItemDone(id, title) {
+	editItemDone(id: number, title: string) {
 		const listItem = qs(`[data-id="${id}"]`);
 
 		const input = qs('input.edit', listItem);
@@ -156,9 +164,9 @@ export default class View {
 	/**
 	 * @param {Function} handler Function called on synthetic event.
 	 */
-	bindAddItem(handler) {
+	bindAddItem(handler: Function) {
 		$on(this.$newTodo, 'change', ({target}) => {
-			const title = target.value.trim();
+			const title = (target as HTMLInputElement).value.trim();
 			if (title) {
 				handler(title);
 			}
@@ -168,23 +176,23 @@ export default class View {
 	/**
 	 * @param {Function} handler Function called on synthetic event.
 	 */
-	bindRemoveCompleted(handler) {
+	bindRemoveCompleted(handler: (ev: Event) => void) {
 		$on(this.$clearCompleted, 'click', handler);
 	}
 
 	/**
 	 * @param {Function} handler Function called on synthetic event.
 	 */
-	bindToggleAll(handler) {
+	bindToggleAll(handler: Function) {
 		$on(this.$toggleAll, 'click', ({target}) => {
-			handler(target.checked);
+			handler((target as HTMLInputElement).checked);
 		});
 	}
 
 	/**
 	 * @param {Function} handler Function called on synthetic event.
 	 */
-	bindRemoveItem(handler) {
+	bindRemoveItem(handler: Function) {
 		$delegate(this.$todoList, '.destroy', 'click', ({target}) => {
 			handler(_itemId(target));
 		});
@@ -193,7 +201,7 @@ export default class View {
 	/**
 	 * @param {Function} handler Function called on synthetic event.
 	 */
-	bindToggleItem(handler) {
+	bindToggleItem(handler: Function) {
 		$delegate(this.$todoList, '.toggle', 'click', ({target}) => {
 			handler(_itemId(target), target.checked);
 		});
@@ -202,7 +210,7 @@ export default class View {
 	/**
 	 * @param {Function} handler Function called on synthetic event.
 	 */
-	bindEditItemSave(handler) {
+	bindEditItemSave(handler: Function) {
 		$delegate(this.$todoList, 'li .edit', 'blur', ({target}) => {
 			if (!target.dataset.iscanceled) {
 				handler(_itemId(target), target.value.trim());
@@ -220,7 +228,7 @@ export default class View {
 	/**
 	 * @param {Function} handler Function called on synthetic event.
 	 */
-	bindEditItemCancel(handler) {
+	bindEditItemCancel(handler: Function) {
 		$delegate(this.$todoList, 'li .edit', 'keyup', ({target, keyCode}) => {
 			if (keyCode === ESCAPE_KEY) {
 				target.dataset.iscanceled = true;

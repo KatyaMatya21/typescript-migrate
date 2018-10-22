@@ -4,8 +4,8 @@
  * @param {string} selector Selector to query
  * @param {Element} [scope] Optional scope element for the selector
  */
-export function qs(selector: string, scope?: Element) {
-	return (scope || document).querySelector(selector);
+export function qs<T extends HTMLElement = HTMLElement>(selector: string, scope?: Element) {
+	return (scope || document).querySelector<T>(selector);
 }
 
 /**
@@ -16,7 +16,7 @@ export function qs(selector: string, scope?: Element) {
  * @param {Function} callback Event callback
  * @param {boolean} [capture] Capture the event
  */
-export function $on(target: Element | Window, type: string, callback: (ev: Event) => void, capture: boolean) {
+export function $on(target: Element | Window, type: string, callback: (ev: Event) => void, capture?: boolean) {
 	target.addEventListener(type, callback, !!capture);
 }
 
