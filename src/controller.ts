@@ -1,13 +1,18 @@
 import {emptyItemQuery} from './item';
-import Store from './store';
 import View from './view';
+import Store from './store';
 
 export default class Controller {
+	store: Store;
+	view: View;
+
+	private _activeRoute: string;
+	private _lastActiveRoute: any;
 	/**
 	 * @param  {!Store} store A Store instance
 	 * @param  {!View} view A View instance
 	 */
-	constructor(store, view) {
+	constructor(store: Store, view: View) {
 		this.store = store;
 		this.view = view;
 
@@ -31,7 +36,7 @@ export default class Controller {
 	 *
 	 * @param {string} raw '' | '#/' | '#/active' | '#/completed'
 	 */
-	setView(raw) {
+	setView(raw: string) {
 		const route = raw.replace(/^#\//, '');
 		this._activeRoute = route;
 		this._filter();
@@ -43,7 +48,7 @@ export default class Controller {
 	 *
 	 * @param {!string} title Title of the new item
 	 */
-	addItem(title) {
+	addItem(title: string) {
 		this.store.insert({
 			id: Date.now(),
 			title,
@@ -60,7 +65,7 @@ export default class Controller {
 	 * @param {number} id ID of the Item in edit
 	 * @param {!string} title New title for the Item in edit
 	 */
-	editItemSave(id, title) {
+	editItemSave(id: number, title: string) {
 		if (title.length) {
 			this.store.update({id, title}, () => {
 				this.view.editItemDone(id, title);
@@ -75,7 +80,7 @@ export default class Controller {
 	 *
 	 * @param {!number} id ID of the Item in edit
 	 */
-	editItemCancel(id) {
+	editItemCancel(id: number) {
 		this.store.find({id}, data => {
 			const title = data[0].title;
 			this.view.editItemDone(id, title);
@@ -87,7 +92,7 @@ export default class Controller {
 	 *
 	 * @param {!number} id Item ID of item to remove
 	 */
-	removeItem(id) {
+	removeItem(id: number) {
 		this.store.remove({id}, () => {
 			this._filter();
 			this.view.removeItem(id);
@@ -107,7 +112,7 @@ export default class Controller {
 	 * @param {!number} id ID of the target Item
 	 * @param {!boolean} completed Desired completed state
 	 */
-	toggleCompleted(id, completed) {
+	toggleCompleted(id: number, completed: boolean) {
 		this.store.update({id, completed}, () => {
 			this.view.setItemComplete(id, completed);
 		});
@@ -118,7 +123,7 @@ export default class Controller {
 	 *
 	 * @param {boolean} completed Desired completed state
 	 */
-	toggleAll(completed) {
+	toggleAll(completed: boolean) {
 		this.store.find({completed: !completed}, data => {
 			for (let {id} of data) {
 				this.toggleCompleted(id, completed);
@@ -133,7 +138,7 @@ export default class Controller {
 	 *
 	 * @param {boolean} [force] Force a re-paint of the list
 	 */
-	_filter(force) {
+	_filter(force?: boolean) {
 		const route = this._activeRoute;
 
 		if (force || this._lastActiveRoute !== '' || this._lastActiveRoute !== route) {
