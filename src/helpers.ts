@@ -4,7 +4,7 @@
  * @param {string} selector Selector to query
  * @param {Element} [scope] Optional scope element for the selector
  */
-export function qs(selector, scope) {
+export function qs(selector: string, scope?: Element) {
 	return (scope || document).querySelector(selector);
 }
 
@@ -16,7 +16,7 @@ export function qs(selector, scope) {
  * @param {Function} callback Event callback
  * @param {boolean} [capture] Capture the event
  */
-export function $on(target, type, callback, capture) {
+export function $on(target: Element | Window, type: string, callback: (ev: Event) => void, capture: boolean) {
 	target.addEventListener(type, callback, !!capture);
 }
 
@@ -30,7 +30,7 @@ export function $on(target, type, callback, capture) {
  *                           from an element matching selector
  * @param {boolean} [capture] Capture the event
  */
-export function $delegate(target, selector, type, handler, capture) {
+export function $delegate(target: Element, selector: string, type: string, handler?: Function, capture?: boolean) {
 	const dispatchEvent = event => {
 		const targetElement = event.target;
 		const potentialElements = target.querySelectorAll(selector);
@@ -51,8 +51,8 @@ export function $delegate(target, selector, type, handler, capture) {
  * Encode less-than and ampersand characters with entity codes to make user-
  * provided text safe to parse as HTML.
  *
- * @param {string} s String to escape
+ * @param s String to escape
  *
- * @returns {string} String with unsafe characters escaped with entity codes
+ * @returns String with unsafe characters escaped with entity codes
  */
-export const escapeForHTML = s => s.replace(/[&<]/g, c => c === '&' ? '&amp;' : '&lt;');
+export const escapeForHTML = (s: string): string => s.replace(/[&<]/g, c => c === '&' ? '&amp;' : '&lt;');
